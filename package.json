@@ -1,0 +1,12 @@
+{
+  "name": "ccc2d_editor",
+  "uuid": "2ce9c194-6a35-479b-9f20-66d213a2deca",
+  "version": "3.6.0",
+  "creator": {
+    "version": "3.6.0"
+  },
+  "dependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "lodash-es": "^4.17.21"
+  }
+}

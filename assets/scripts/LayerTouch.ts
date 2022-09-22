@@ -6,23 +6,54 @@ import {
   EventTouch,
   UITransform,
   v3,
+  input,
+  KeyCode,
+  Input,
+  __private,
+  EventKeyboard,
 } from 'cc'
 import { HHelpTool } from './Framework/HHelpTool'
 import { NodeGrid } from './NodeGrid'
 import WordsLib from './Framework/WordsLib'
+import { GRID_STATUS } from './Framework/Constant'
 const { ccclass, property } = _decorator
 
 @ccclass('LayerTouch')
 export class LayerTouch extends Component {
-  private _isPress: boolean = false
+  private _isPress = {
+    status: false,
+  }
   private _curTouchIndexList: any[] = [] // 当前触摸的索引的列表
   private _isRightSelect: boolean = false // 是否选择的正确
 
   start() {
+    this.node.on(Node.EventType.MOUSE_DOWN, this.onClick, this)
     this.registetTouchListener()
+    this.registKeyPressingListener()
   }
   onDestroy() {
     this.removeTouchListener()
+    this.removePressingListener()
+  }
+  removePressingListener() {
+    this.node.off(Node.EventType.MOUSE_DOWN, this.onClick, this)
+    input.off(Input.EventType.KEY_DOWN, this.keyDownCtrl, this)
+    input.off(Input.EventType.KEY_UP, this.keyDownCtrl, this)
+  }
+  registKeyPressingListener() {
+    input.on(Input.EventType.KEY_DOWN, this.keyDownCtrl, this)
+    input.on(Input.EventType.KEY_UP, this.keyUpCtrl, this)
+  }
+  keyUpCtrl(event: EventKeyboard) {
+    if (event.keyCode === KeyCode.CTRL_LEFT) {
+      this._isPress.status = false
+    }
+  }
+  keyDownCtrl(event: EventKeyboard) {
+    if (event.keyCode === KeyCode.CTRL_LEFT) {
+      this._isPress.status = true
+      console.log({ press: this._isPress.status })
+    }
   }
   registetTouchListener() {
     this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this)
@@ -36,12 +67,33 @@ export class LayerTouch extends Component {
     this.node.off(Node.EventType.TOUCH_END, this.onTouchEnd, this)
     this.node.off(Node.EventType.TOUCH_CANCEL, this.onTouchEnd, this)
   }
+  selectIdiom() {}
+  onClick(event) {
+    if (this._isPress.status) {
+      let localPos = this.node
+        .getComponent(UITransform)
+        .convertToNodeSpaceAR(
+          v3(event.getLocation().x, event.getLocation().y, 0),
+        )
+      // 转换为点坐标
+      let hIndex = Math.abs(Math.floor(localPos.x / 80))
+      let vIndex = Math.abs(Math.floor(localPos.y / 80)) - 1
+      let oneDimension = hIndex + vIndex * 9
+      let nodeGrid = this.node.children[oneDimension].getComponent(NodeGrid)
+      if (nodeGrid.getGridItemStatus() === GRID_STATUS.REMOVE_CHAR) {
+        nodeGrid.recoverChar()
+        console.log('recover')
+      } else if (nodeGrid.getGridItemStatus() === GRID_STATUS.HAS_CHAR) {
+        nodeGrid.removeChar()
+      }
+    }
+  }
   /**
    * 触摸开始
    * @param event
    */
   onTouchStart(event) {
-    this._isPress = false
+    // this._isPress.status = false
     this._isRightSelect = false
     this._curTouchIndexList = []
   }
@@ -50,6 +102,7 @@ export class LayerTouch extends Component {
    * @param event
    */
   onTouchMove(event: EventTouch) {
+    this._isPress.status = false
     let localPos = this.node
       .getComponent(UITransform)
       .convertToNodeSpaceAR(v3(event.getLocation().x, event.getLocation().y, 0))
@@ -64,7 +117,6 @@ export class LayerTouch extends Component {
      *
      *          80 ]
      */
-    console.log({ hIndex, vIndex, localPos })
     this.insertToList(oneDimension)
   }
   /**

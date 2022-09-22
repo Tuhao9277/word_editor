@@ -61,6 +61,11 @@ export class NodeGrid extends Component {
     }
     this.resetGridItem()
   }
+  recoverChar() {
+    console.log('recover inside')
+    this.RemoveSelect.active = false
+    this._status = GRID_STATUS.HAS_CHAR
+  }
   /**
    * 移除字符
    */

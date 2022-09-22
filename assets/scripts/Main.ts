@@ -15,13 +15,13 @@ export class Main extends Component {
     this.nodeLayoutGrids.getComponent(LayoutGrids).clearAllGrids()
   }
   /**
-   * 删除最后一个词
+   * 删词
    */
   onPressDeleteWord() {
     this.nodeLayoutGrids.getComponent(LayoutGrids).deleteLastWord()
   }
   /**
-   * 删除指定字符
+   * 指定去字
    */
   _removeChars(INWord: NodeGrid[]) {
     let emptyNums = 0
@@ -43,7 +43,7 @@ export class Main extends Component {
     }
   }
   /**
-   * 移除字符
+   * 去字
    */
   onPressRemoveChar() {
     let totalWords = window.app.getWordsData().getAllWords()

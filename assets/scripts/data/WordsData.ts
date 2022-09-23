@@ -26,22 +26,10 @@ export class WordsData {
    * 获取并删除最后一个成语 */
   getAndDeleteLastWord() {
     if (this._totalWords.length > 0) {
+      let lastWord = last(this._totalWords)
       this._totalWords = initial(this._totalWords)
-      return last(this._totalWords)
+      return lastWord
     }
-  }
-  /**
-   * 寻找指定节点
-   * @param INWords
-   * @returns
-   */
-  findInTotalWords(INWords: any) {
-    for (let i = 0; i < this._totalWords.length; i++) {
-      if (this._totalWords[i] === INWords) {
-        return true
-      }
-    }
-    return false
   }
   /**
    * 清空已存成语
@@ -55,4 +43,5 @@ export class WordsData {
   getAllWords() {
     return this._totalWords
   }
+ 
 }

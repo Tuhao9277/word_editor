@@ -27,7 +27,6 @@ export class LayerTouch extends Component {
   private _isRightSelect: boolean = false // 是否选择的正确
 
   start() {
-    this.node.on(Node.EventType.MOUSE_DOWN, this.onClick, this)
     this.registetTouchListener()
     this.registKeyPressingListener()
   }
@@ -35,14 +34,13 @@ export class LayerTouch extends Component {
     this.removeTouchListener()
     this.removePressingListener()
   }
-  removePressingListener() {
-    this.node.off(Node.EventType.MOUSE_DOWN, this.onClick, this)
-    input.off(Input.EventType.KEY_DOWN, this.keyDownCtrl, this)
-    input.off(Input.EventType.KEY_UP, this.keyDownCtrl, this)
-  }
   registKeyPressingListener() {
     input.on(Input.EventType.KEY_DOWN, this.keyDownCtrl, this)
     input.on(Input.EventType.KEY_UP, this.keyUpCtrl, this)
+  }
+  removePressingListener() {
+    input.off(Input.EventType.KEY_DOWN, this.keyDownCtrl, this)
+    input.off(Input.EventType.KEY_UP, this.keyDownCtrl, this)
   }
   keyUpCtrl(event: EventKeyboard) {
     if (event.keyCode === KeyCode.CTRL_LEFT) {
@@ -56,12 +54,14 @@ export class LayerTouch extends Component {
     }
   }
   registetTouchListener() {
+    this.node.on(Node.EventType.MOUSE_DOWN, this.onClick, this)
     this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this)
     this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this)
     this.node.on(Node.EventType.TOUCH_END, this.onTouchEnd, this)
     this.node.on(Node.EventType.TOUCH_CANCEL, this.onTouchEnd, this)
   }
   removeTouchListener() {
+    this.node.off(Node.EventType.MOUSE_DOWN, this.onClick, this)
     this.node.off(Node.EventType.TOUCH_START, this.onTouchStart, this)
     this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this)
     this.node.off(Node.EventType.TOUCH_END, this.onTouchEnd, this)
@@ -102,7 +102,7 @@ export class LayerTouch extends Component {
    * @param event
    */
   onTouchMove(event: EventTouch) {
-    this._isPress.status = false
+    // this._isPress.status = false
     let localPos = this.node
       .getComponent(UITransform)
       .convertToNodeSpaceAR(v3(event.getLocation().x, event.getLocation().y, 0))
@@ -110,6 +110,7 @@ export class LayerTouch extends Component {
     let hIndex = Math.abs(Math.floor(localPos.x / 80))
     let vIndex = Math.abs(Math.floor(localPos.y / 80)) - 1
     let oneDimension = hIndex + vIndex * 9
+
     // 从左到右，从上到下的位置
     /**
      * [ 0 ....,8,
@@ -162,11 +163,10 @@ export class LayerTouch extends Component {
     ])
   }
   showCurWord() {
-    console.log('show cur Words')
     let newWords = WordsLib.findOneWord(window.app.getWordsData().getLastWord())
-    // 如果有成语可以写入
     if (!newWords) {
-      let lastWordList = window.app.getWordsData().getAndDeleteLastWord()
+      // 如果没有成语可以写入，把刷过的地方删掉
+      window.app.getWordsData().getAndDeleteLastWord()
       this.scheduleOnce(() => {
         // 设置完，取消选中
         this.changeMouseSelect(null, false)

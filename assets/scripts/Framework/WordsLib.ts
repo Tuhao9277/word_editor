@@ -38,6 +38,29 @@ class WordsManager {
     }
     return des
   }
+  public replaceWord(lastWord: NodeGrid[]) {
+    /**
+     * 没有交叉,把字全去掉，重新加
+     *
+     * 如果有交叉，则把num为1的去掉重换
+     */
+    lastWord.forEach((item, index) => {
+      const curNode = item.getComponent(NodeGrid)
+      if (curNode.getGridItemNums() === 1) {
+        curNode.replaceLabelInfo('')
+      }
+    })
+    let newWord = this.findOneWord(lastWord)
+    lastWord.forEach((item, index) =>
+      item.getComponent(NodeGrid).replaceLabelInfo(newWord[index]),
+    )
+  }
+
+  /**
+   * 刷词，填入
+   * @param INWordsList
+   * @returns
+   */
   public findOneWord(INWordsList: NodeGrid[]): string {
     this._curRandList = []
     this._curRandList = this._getRandList(INWordsList)

@@ -44,6 +44,9 @@ export class NodeGrid extends Component {
       this._status = GRID_STATUS.HAS_CHAR
     }
   }
+  replaceLabelInfo(INWord: string) {
+    this.labelWord.string = INWord
+  }
   /**
    *  返回单元网格内文字
    * @returns string
@@ -82,6 +85,13 @@ export class NodeGrid extends Component {
     this.DeleteSelect.active = false
     this._wordNums = 0
     this.labelWord.string = ''
+  }
+  /**
+   * 获取当前格子上成语的个数
+   * @returns
+   */
+  getGridItemNums() {
+    return this._wordNums
   }
   getGridItemStatus() {
     return this._status

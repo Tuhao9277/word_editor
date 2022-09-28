@@ -11,6 +11,7 @@ import {
   Input,
   __private,
   EventKeyboard,
+  Vec3,
 } from 'cc'
 import { HHelpTool } from './Framework/HHelpTool'
 import { NodeGrid } from './NodeGrid'
@@ -50,7 +51,6 @@ export class LayerTouch extends Component {
   keyDownCtrl(event: EventKeyboard) {
     if (event.keyCode === KeyCode.CTRL_LEFT) {
       this._isPress.status = true
-      console.log({ press: this._isPress.status })
     }
   }
   registetTouchListener() {
@@ -70,7 +70,7 @@ export class LayerTouch extends Component {
   selectIdiom() {}
   onClick(event) {
     if (this._isPress.status) {
-      let localPos = this.node
+      let localPos = this.node.parent
         .getComponent(UITransform)
         .convertToNodeSpaceAR(
           v3(event.getLocation().x, event.getLocation().y, 0),
@@ -105,7 +105,8 @@ export class LayerTouch extends Component {
     // this._isPress.status = false
     let localPos = this.node
       .getComponent(UITransform)
-      .convertToNodeSpaceAR(v3(event.getLocation().x, event.getLocation().y, 0))
+      .convertToNodeSpaceAR(new Vec3(event.getUILocation().x, event.getUILocation().y, 0))
+
     // 转换为点坐标
     let hIndex = Math.abs(Math.floor(localPos.x / 80))
     let vIndex = Math.abs(Math.floor(localPos.y / 80)) - 1

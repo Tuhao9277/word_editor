@@ -1,4 +1,4 @@
-import { _decorator, Component, Label } from 'cc'
+import { _decorator, Component, Label, sys } from 'cc'
 import { GRID_STATUS } from './Framework/Constant'
 import WordsLib from './Framework/WordsLib'
 import { LayoutGrids } from './LayoutGrids'
@@ -14,9 +14,17 @@ export class Main extends Component {
   @property(Label)
   levelNode: Label = null
 
-  private _curLevel = 1
+  private _curLevel = null
 
   start() {
+    let curLevel = sys.localStorage.getItem('level')
+    console.log(curLevel)
+    if (curLevel) {
+      this.setLevel(+curLevel)
+    } else {
+      sys.localStorage.setItem('level', '1')
+      this.setLevel(1)
+    }
     this.levelNode.string = `当前关：第${this._curLevel}关`
   }
   /**
@@ -33,7 +41,8 @@ export class Main extends Component {
       .getComponent(LayoutGrids)
       .getAllWords()
     HHelpTool.creatJosnFile(otherInfo, `${this._curLevel}.json`)
-    this._curLevel++
+    // this._curLevel++
+    sys.localStorage.setItem('level', `${++this._curLevel}`)
     this.levelNode.string = `当前关：第${this._curLevel}关`
     this.onPressClear()
   }

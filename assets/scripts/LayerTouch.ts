@@ -70,10 +70,10 @@ export class LayerTouch extends Component {
   selectIdiom() {}
   onClick(event) {
     if (this._isPress.status) {
-      let localPos = this.node.parent
+      let localPos = this.node
         .getComponent(UITransform)
         .convertToNodeSpaceAR(
-          v3(event.getLocation().x, event.getLocation().y, 0),
+          v3(event.getUILocation().x, event.getUILocation().y, 0),
         )
       // 转换为点坐标
       let hIndex = Math.abs(Math.floor(localPos.x / 80))
